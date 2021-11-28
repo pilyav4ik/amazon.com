@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation    Add product to cart
 Library           SeleniumLibrary  timeout=10   implicit_wait=1.5   run_on_failure=Capture Page Screenshot  run_on_failure=close  screenshot_root_directory=Screenshots
+Suite Teardown   Run Keyword And Ignore Error  Suite shutdown
 
 *** Variables ***
 ${SERVER}                   https://amazon.com
@@ -22,5 +23,4 @@ Add product to cart
     CLICK LINK    id:hlb-view-cart-announce
     PAGE SHOULD CONTAIN     Apple iPhone 12 Pro, 128GB, Pacific Blue - Fully Unlocked (Renewed)
     PAGE SHOULD CONTAIN     Subtotal (1 item)
-    PAGE SHOULD CONTAIN     $998.00
-    CLOSE BROWSER
+    CLOSE ALL BROWSERS
