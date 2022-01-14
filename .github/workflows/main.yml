@@ -1,47 +1,25 @@
 name: Robot Framework
-
-on:
-  push:
-    branches: [ tests ]
-    
-    jobs:
-    test:
-        runs-on: ubuntu-latest
-        steps:
-        - uses: actions/checkout@v2
-        - name: Execute tests
-          uses: joonvena/robotframework-docker-action@v0.1
-          env:
-            BROWSER: chrome
-            ROBOT_TESTS_DIR: ${{ github.workspace }}/Tests
-            ROBOT_REPORTS_DIR: ${{ github.workspace }}/reports
-        - name: Upload test results
-          uses: actions/upload-artifact@v1
-          if: always()
-          with:
-            name: reports
-            path: ${{ github.workspace }}/reports
-            
-     generate_report:
-        if: always()
-        needs: [test] 
-        runs-on: ubuntu-latest
-        steps:
-        - name: Download reports
-          uses: actions/download-artifact@v1
-          with:
-            name: reports
-        - name: Get Repository Owner & Name
-          run: |
-            export OWNER="$(echo "${{ github.repository }}" | awk -F / '{print $1}' | sed -e "s/:refs//")"
-            export REPO="$(echo "${{ github.repository }}" | awk -F / '{print $2}' | sed -e "s/:refs//")"
-            echo "::set-env name=REPOSITORY_OWNER::$OWNER"
-            echo "::set-env name=REPOSITORY_NAME::$REPO"
-        - name: Send report to commit
-          uses: joonvena/robotframework-reporter-action@v0.1
-          env:
-            GH_ACCESS_TOKEN: ${{ secrets.TOKEN }}
-            REPO_OWNER: ${{ env.REPOSITORY_OWNER }}
-            COMMIT_SHA: ${{ github.sha }}
-            REPOSITORY: ${{ env.REPOSITORY_NAME }}
-            REPORT_PATH: reports
+  # You may pin to the exact commit or the version.
+  #uses: joonvena/robotframework-docker-action@3434822e049a0a5b2a02992e58c60a6831fa1189
+  uses: joonvena/robotframework-docker-action@v1.0
+  with:
+    # Shared memory that Docker container is allowed to use
+    allowed_shared_memory: 1g
+    # Browser to use
+    browser: chrome
+    # Execute tests in parallel
+    robot_threads: 1
+    # Extra settings for parallel execution. https://github.com/mkorpela/pabot#command-line-options
+    pabot_options:  
+    # Extra options for robot command
+    robot_options:  
+    # Color depth of the virtual screen
+    screen_color_depth: 24
+    # Height of the virtual screen
+    screen_height: 1080
+    # Width of the virtual screen
+    screen_width: 1920
+    # Directory where Robot tests are located in the repository
+    robot_tests_dir: Tests
+    # Where will the report from test be saved
+    robot_reports_dir: # default is reports
